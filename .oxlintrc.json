@@ -1,0 +1,107 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "react"],
+  "jsPlugins": ["./scripts/oxlint-plugin.js"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "options": {
+    "typeAware": true,
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "warn"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": "off",
+    "typescript/consistent-return": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "overrides": [
+    {
+      "files": ["packages/*/src/**/*.{ts,tsx}"],
+      "rules": {
+        "miridcode/blank-line-before-control-flow": "error",
+        "miridcode/blank-line-before-return": "error",
+        "miridcode/prefer-es-toolkit": "error",
+        "miridcode/arrow-function": "error",
+        "react/no-multi-comp": "error",
+        "eslint/arrow-body-style": ["error", "as-needed"],
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              { "group": ["es-toolkit", "es-toolkit/*"], "message": "Import from \"@/lib/utils\"." }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "importNames": ["memo", "useCallback", "useMemo"],
+                "message": "React Compiler memoizes this for you."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/*/src/**/*.tsx"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              { "group": ["es-toolkit", "es-toolkit/*"], "message": "Import from \"@/lib/utils\"." }
+            ],
+            "paths": [
+              {
+                "name": "react",
+                "importNames": [
+                  "default",
+                  "memo",
+                  "useCallback",
+                  "useEffect",
+                  "useImperativeHandle",
+                  "useInsertionEffect",
+                  "useLayoutEffect",
+                  "useMemo",
+                  "useReducer",
+                  "useRef",
+                  "useState",
+                  "useSyncExternalStore"
+                ],
+                "message": "Move this into a use-<name>.ts hook. React Compiler handles memoization."
+              },
+              {
+                "name": "@opentui/react",
+                "importNames": [
+                  "useAnimationTick",
+                  "useAppContext",
+                  "useBlur",
+                  "useEffectEvent",
+                  "useFocus",
+                  "useKeyboard",
+                  "useOnResize",
+                  "usePaste",
+                  "useRenderer",
+                  "useSelectionHandler",
+                  "useTerminalDimensions",
+                  "useTimeline"
+                ],
+                "message": "Move this hook into a use-<name>.ts hook."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/*/src/lib/utils.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
+      }
+    }
+  ]
+}

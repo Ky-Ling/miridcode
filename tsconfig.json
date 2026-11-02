@@ -1,0 +1,5 @@
+{
+  // Tooling only. Each package under packages/ has its own tsconfig.
+  "extends": "./tsconfig.base.json",
+  "include": ["scripts/*.ts", ".claude/skills/**/*.ts"]
+}
