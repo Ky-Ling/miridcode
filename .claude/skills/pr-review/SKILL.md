@@ -10,7 +10,7 @@ Act as a senior engineer reviewing a change to a terminal AI coding agent that r
 
 ## Constraints
 
-- **Read-only, for every sub-agent too.** Report findings and change nothing. Reviewers may run only `bun run lint`, `bun run typecheck`, `bun run format:check`, and read-only `git`.
+- **Read-only, for every sub-agent too.** Report findings and change nothing. Reviewers may run only `bun run lint`, `bun run typecheck`, `bun run format:check`, `bun run test`, and read-only `git`.
 - **No fixes.** Wait for the user's answer in Phase 7 before changing anything.
 - **Scratch copies never symlink the repo's `node_modules`.** A `--fix` run follows the link and rewrites the real files.
 
@@ -66,9 +66,10 @@ Read every source that applies. Each one feeds the Convention dimension:
 bun run lint
 bun run typecheck
 bun run format:check
+bun run test
 ```
 
-Done when you have read the sources and hold all three results, whether they pass or fail.
+Done when you have read the sources and hold all four results, whether they pass or fail.
 
 ### Phase 3: Run the two axes
 
@@ -154,7 +155,7 @@ Every security finding is CRITICAL. If you're unsure whether input reaches a dan
 3. **Mocks are realistic**, including failures and slow responses.
 4. **Removed or skipped tests** have a clear reason.
 
-The repo has no `test` script yet. Until it does, report this dimension only for agent tools, billing, and auth. Omit it for style and config changes.
+Report this dimension for business logic, following the `vitest` skill's scope. Omit it for component, style, and config changes, which stay untested.
 
 #### Impact
 

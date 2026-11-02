@@ -1,4 +1,7 @@
 // Rules oxlint has no native equivalent for. See "Code structure" in CLAUDE.md.
+import { existsSync } from 'node:fs'
+import { basename, dirname, join } from 'node:path'
+
 const UTILS_PATH = '@/lib/utils'
 
 const TYPEOF_HELPERS = {
@@ -23,6 +26,11 @@ const LENGTH_TESTS = {
 }
 
 const FLIPPED_OPERATORS = { '<': '>', '>': '<', '<=': '>=', '>=': '<=' }
+
+const COLLECTED_TEST = /\/src\/(?:.+\/)?__test__\/[^/]+\.test\.tsx?$/
+
+const COMPONENT_TEST_MESSAGE =
+  'Components stay untested. Move the logic to a hook or utility and test it there.'
 
 const CONTROL_FLOW_KEYWORDS = {
   DoWhileStatement: 'do',
@@ -257,6 +265,52 @@ const preferEsToolkit = {
   },
 }
 
+// `.test.tsx` is for hooks that need a real element. Vitest skips any other `.test.tsx`,
+// so a component test would silently never run. A hook test renders host elements only.
+const noUiTests = {
+  meta: { type: 'problem' },
+  create(context) {
+    const name = basename(context.filename)
+
+    return {
+      Program(node) {
+        if (!name.endsWith('.test.tsx') || name.startsWith('use-')) return
+
+        context.report({ node, message: COMPONENT_TEST_MESSAGE })
+      },
+      JSXOpeningElement(node) {
+        if (node.name.type === 'JSXIdentifier' && /^[a-z]/.test(node.name.name)) return
+
+        context.report({ node, message: COMPONENT_TEST_MESSAGE })
+      },
+    }
+  },
+}
+
+// `src/**/__test__/<name>.test.ts` covers `../<name>.ts`. Vitest collects only that shape,
+// so a test anywhere else would silently never run.
+const testLocation = {
+  meta: { type: 'problem' },
+  create(context) {
+    return {
+      Program(node) {
+        const { filename } = context
+        const source = basename(filename).replace(/\.test\.tsx?$/, '.ts')
+
+        if (COLLECTED_TEST.test(filename) && existsSync(join(dirname(dirname(filename)), source))) {
+          return
+        }
+
+        context.report({
+          node,
+          message:
+            'Move this test to a `__test__/` folder under `src/`, beside the file it covers: `<name>.test.ts` for `../<name>.ts`.',
+        })
+      },
+    }
+  },
+}
+
 const arrowFunction = {
   meta: { type: 'suggestion', fixable: 'code' },
   create(context) {
@@ -345,6 +399,8 @@ export default {
     'arrow-function': arrowFunction,
     'blank-line-before-control-flow': blankLineBeforeControlFlow,
     'blank-line-before-return': blankLineBeforeReturn,
+    'no-ui-tests': noUiTests,
     'prefer-es-toolkit': preferEsToolkit,
+    'test-location': testLocation,
   },
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "react"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "react", "vitest"],
   "jsPlugins": ["./scripts/oxlint-plugin.js"],
   "categories": {
     "correctness": "error",
@@ -101,6 +101,60 @@
       "files": ["packages/*/src/lib/utils.ts"],
       "rules": {
         "eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["packages/*/**/*.{test,spec}.{ts,tsx,mts,cts,js,jsx,mjs,cjs}"],
+      "rules": {
+        "miridcode/no-ui-tests": "error",
+        "miridcode/test-location": "error",
+        "vitest/consistent-test-it": ["error", { "fn": "it", "withinDescribe": "it" }],
+        "vitest/expect-expect": "error",
+        "vitest/no-disabled-tests": "error",
+        "vitest/no-focused-tests": "error",
+        "vitest/no-standalone-expect": "error",
+        "vitest/valid-expect": "error",
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["es-toolkit", "es-toolkit/*"],
+                "message": "Import from \"@/lib/utils\"."
+              },
+              {
+                "group": ["@opentui/**", "react", "react/**"],
+                "message": "Test hooks through \"@/lib/render-hook\". Components stay untested."
+              },
+              {
+                "group": ["**/use-*", "@/hooks/**", "**/render-hook"],
+                "message": "Hooks are tested in their own use-<name>.test.ts file."
+              }
+            ],
+            "paths": [{ "name": "bun:test", "message": "Tests run on Vitest." }]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/*/src/**/__test__/use-*.test.{ts,tsx}"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["es-toolkit", "es-toolkit/*"],
+                "message": "Import from \"@/lib/utils\"."
+              },
+              {
+                "group": ["@opentui/**", "react", "react/**"],
+                "message": "Test hooks through \"@/lib/render-hook\". Components stay untested."
+              }
+            ],
+            "paths": [{ "name": "bun:test", "message": "Tests run on Vitest." }]
+          }
+        ]
       }
     }
   ]

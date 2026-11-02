@@ -2,10 +2,11 @@ import type { TextareaRenderable } from '@opentui/core'
 import { useRenderer } from '@opentui/react'
 import { useRef } from 'react'
 
-import { isEmpty, trim } from '@/lib/utils'
+import { isUndefined } from '@/lib/utils'
 
-import { useCommandMenu } from '../command-menu'
+import { runCommand, useCommandMenu } from '../command-menu'
 import type { InputBarProps } from './types'
+import { getSubmitText } from './utils'
 
 export const useInputBar = ({ onSubmit, disabled }: Required<InputBarProps>) => {
   const textareaRef = useRef<TextareaRenderable>(null)
@@ -27,12 +28,7 @@ export const useInputBar = ({ onSubmit, disabled }: Required<InputBarProps>) => 
     if (!textarea || !command) return
 
     textarea.setText('')
-
-    if (command.action) {
-      command.action({ exit: () => renderer.destroy() })
-    } else {
-      textarea.insertText(`/${command.name} `)
-    }
+    runCommand(command, { exit: () => renderer.destroy() }, (text) => textarea.insertText(text))
   }
 
   const submitText = () => {
@@ -40,9 +36,9 @@ export const useInputBar = ({ onSubmit, disabled }: Required<InputBarProps>) => 
 
     if (!textarea) return
 
-    const text = trim(textarea.plainText)
+    const text = getSubmitText(textarea.plainText)
 
-    if (isEmpty(text)) return
+    if (isUndefined(text)) return
 
     onSubmit(text)
     textarea.setText('')
