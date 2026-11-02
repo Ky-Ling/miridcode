@@ -34,7 +34,7 @@ This branch does two things:
 
 **Decision**: Approve | Approve with comments | Request changes
 
-**Checks**: lint ✅ · typecheck ✅ · format ✅
+**Checks**: lint ✅ · typecheck ✅ · format ✅ · test ✅
 
 ### 🧭 Axis verdict
 
@@ -120,7 +120,7 @@ This branch does two things:
 
 **Decision**: Request changes
 
-**Checks**: lint ✅ · typecheck ✅ · format ✅
+**Checks**: lint ✅ · typecheck ✅ · format ✅ · test ✅
 
 ### 🧭 Axis verdict
 
@@ -164,18 +164,18 @@ This branch does two things:
 
 ### 📊 Dimension coverage
 
-| Dimension        | Result         | Issues             |
-| ---------------- | -------------- | ------------------ |
-| Convention       | ❌             | #2                 |
-| Logic            | ✅             |                    |
-| Impact           | ✅             |                    |
-| Over-engineering | ✅             |                    |
-| Simplicity       | ❌             | #3                 |
-| Robustness       | ❌             | #1                 |
-| Consistency      | ✅             |                    |
-| Architecture     | ✅             |                    |
-| Security         | ✅             |                    |
-| Testing          | Not applicable | No test script yet |
+| Dimension        | Result         | Issues         |
+| ---------------- | -------------- | -------------- |
+| Convention       | ❌             | #2             |
+| Logic            | ✅             |                |
+| Impact           | ✅             |                |
+| Over-engineering | ✅             |                |
+| Simplicity       | ❌             | #3             |
+| Robustness       | ❌             | #1             |
+| Consistency      | ✅             |                |
+| Architecture     | ✅             |                |
+| Security         | ✅             |                |
+| Testing          | Not applicable | UI-only change |
 
 ### ✅ Passed checks (brief)
 

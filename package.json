@@ -13,6 +13,7 @@
     "lint": "oxlint . --no-error-on-unmatched-pattern",
     "lint:fix": "oxlint . --fix --no-error-on-unmatched-pattern",
     "start:cli": "bun run packages/cli/src/index.tsx",
+    "test": "bun run --filter './packages/*' test",
     "typecheck": "bun run --filter './packages/*' typecheck && tsc --noEmit"
   },
   "devDependencies": {

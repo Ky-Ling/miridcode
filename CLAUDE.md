@@ -8,9 +8,14 @@ Terminal AI coding agent: a Bun workspace whose `packages/cli` is an OpenTUI + R
 bun run lint       # oxlint with type information; warnings fail
 bun run format     # oxfmt
 bun run typecheck  # tsc in every package, then the tooling scripts
+bun run test       # Vitest on Bun; `bun test` is Bun's own runner, not this
 ```
 
-All three pass before a task is done. Saving in VS Code or running `bun run lint:fix` autofixes most of rules 1, 2, and 6.
+All four pass before a task is done. Saving in VS Code or running `bun run lint:fix` autofixes most of rules 1, 2, and 6.
+
+## Testing
+
+Tests cover business logic only. Each lives in a `__test__/` folder inside the domain it covers: `command-menu/utils.ts` gets `command-menu/__test__/utils.test.ts`. Hooks are tested through `renderHook` from `@/lib/render-hook`, asserting on state and callbacks. Components stay untested, so move a rule out of a component into a hook or utility to test it. Use the `vitest` skill when adding or changing business logic or editing a test.
 
 ## React Compiler
 
@@ -20,7 +25,7 @@ Leave memoization to the compiler: `useMemo`, `useCallback`, and `memo` are bann
 
 ## Code structure
 
-`bun run lint` (`.oxlintrc.json`, `scripts/oxlint-plugin.js`) enforces rules 1, 2, and 6, one component per file, and the hook import ban in rule 3. Review covers the rest: JSX-only components, one flat return object, what an `index.ts` exports, rule 5, and the layout below. oxfmt owns formatting: no semicolons, single quotes, sorted imports.
+`bun run lint` (`.oxlintrc.json`, `scripts/oxlint-plugin.js`) enforces rules 1, 2, and 6, one component per file, the hook import ban in rule 3, and where tests live and what they import or render. Review covers the rest: whether a test covers business logic, JSX-only components, one flat return object, what an `index.ts` exports, rule 5, and the layout below. oxfmt owns formatting: no semicolons, single quotes, sorted imports.
 
 1. **Blank line before `return` and control flow** (`if`, `for`, `while`, `do`, `switch`, `try`) whenever a statement comes before it in the block.
 2. **Arrow components.** One with only JSX uses an implicit return: `export const Tag = (…) => (<box>…</box>)`. Hooks are arrow functions too.
@@ -55,7 +60,7 @@ export const useSession = () => {
 
 Layout, inside `packages/<name>/src/` (kebab-case files, `PascalCase` components, `useCamelCase` hooks):
 
-- `components/<name>.tsx`: a component with only JSX. It becomes `components/<name>/` (`<name>.tsx`, `index.ts`, plus `use-<name>.ts`, `constants.ts`, and `types.ts` when needed) once it has any of those.
-- `screens/<name>/`: `index.tsx` (orchestrator), `use-<name>.ts`, `constants.ts`, `components/<part>.tsx` + `components/index.ts`.
+- `components/<name>.tsx`: a component with only JSX. It becomes `components/<name>/` (`<name>.tsx`, `index.ts`, plus `use-<name>.ts`, `constants.ts`, `types.ts`, `utils.ts`, and `__test__/` when needed) once it has any of those.
+- `screens/<name>/`: `index.tsx` (orchestrator), `use-<name>.ts`, `constants.ts`, `utils.ts`, `__test__/`, `components/<part>.tsx` + `components/index.ts`.
 - `hooks/use-<name>.ts`: hooks shared across screens.
 - Keep components under ~200 lines and hooks under ~300; split beyond that.
